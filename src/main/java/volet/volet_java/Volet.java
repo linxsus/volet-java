@@ -1,6 +1,5 @@
 package volet.volet_java;
 
-import java.text.DecimalFormat;
 
 public class Volet {
 
