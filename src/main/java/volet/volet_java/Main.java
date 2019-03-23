@@ -3,17 +3,20 @@ package volet.volet_java;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Scanner;
 
 public class Main {
 	
-	
-	 public Main()
+	 private static Scanner sc;
+
+	public Main()
 	    {
 	        super();
 	    }
 	 
 	    public static void main ( String[] args )
 	    {
+	    	sc = new Scanner(System.in);
 	    	InputStream in;
 	    	OutputStream out;
 	    	Serie serie=null;
@@ -28,7 +31,8 @@ public class Main {
 	       new Lecture(in);
 	       Ecriture input=new Ecriture(out);
 	       while (true) {
-	    	   input.serialEvent(null);
+	    	   String str = sc.nextLine();
+	    	   input.serialEvent(str);
 	        }
 	    }
 

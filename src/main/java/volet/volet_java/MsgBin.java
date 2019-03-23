@@ -13,7 +13,7 @@ public class MsgBin {
 	    return Crc.calcul(data, ind-1)==data[ind-1];// le ind-1 de Crc.calcul est pour ne pas prendre en compte le crc dans le message
 	}
 	
-	public int getInd() {
+	public int getInd() { 
 		return ind;
 	}
 

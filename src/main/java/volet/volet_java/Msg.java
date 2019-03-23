@@ -47,7 +47,7 @@ public enum Msg {
 	private String stringMsg = "";
 	private MsgBin msgBin;
 
-	public MsgBin getMsgIn() {
+	public MsgBin getMsgIn() { 
 		return msgBin;
 	}
 
