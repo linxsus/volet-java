@@ -1,7 +1,6 @@
 package volet.volet_java;
 
 
-
 public class Volet {
 
 	/**
@@ -12,17 +11,17 @@ public class Volet {
 	 * N� du relais sur arduino a activer pour faire descendre le volet
 	 */
 	private int relaisM;
-
+	
 	/**
 	 * entree sur le arduino pour demander la descente
 	 */
 	private int entreeD;
-
+	
 	/**
 	 * entree sur le arduino pour demander la monter
 	 */
 	private int entreeM;
-
+	
 	/**
 	 * temps pour que le volet descende
 	 */
@@ -39,36 +38,29 @@ public class Volet {
 	 * 0= arret ,1= monter , 2= descente
 	 */
 	private int etat; 
-
-
-	/**
-	 *  utile pour indiquer a l'object a quelle factory (contexte) il appartient
+    FactoryXG factory; 
+	
+	
+	 /**
+	 * @param a
+	 * @param b
+	 * @return
 	 */
-	FactoryXG factory;
-
-
-
-
-
-	//	 /**
-	//	 * @param a
-	//	 * @param b
-	//	 * @return
-	//	 */
-	//	private int pourcentage(int a,int b){
-	//	        //TODO
-	//		return 0;
-	//	    }
+	private int pourcentage(int a,int b){
+	        //TODO
+		return 0;
+	    }
 
 	/**
 	 * constructeur
 	 * 
-	 * @param relaisD N° du relais pour une descente
-	 * @param relaisM N° du relais pour une monter
-	 * @param entreeD N° de l'entree qui fait une demande de descente
-	 * @param entreeM N° de l'entree qui fait une demande de monter 
-	 * @param tempsM temps en ms pour faire une monter
-	 * @param tempsD temps en ms pour faire une descente
+	 * @param factory factory utile pour la gestion des object.
+	 * @param relaisD N° du relais sur arduino a activer pour faire descendre le volet
+	 * @param relaisM N° du relais sur arduino a activer pour faire monter le volet
+	 * @param entreeD entree sur le arduino pour demander la descente
+	 * @param entreeM entree sur le arduino pour demander la monter
+	 * @param tempsM temps pour que le volet monter
+	 * @param tempsD temps pour que le volet descende
 	 */
 	public Volet(FactoryXG factory,int relaisD,int relaisM,int entreeD,int entreeM,long tempsM,long tempsD) { // TODO rajouter le factory
 		super();
@@ -84,6 +76,15 @@ public class Volet {
 		descendre();//je descend le volet pour connaitre sa position
 		position=0;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Volet [relaisD=" + relaisD + ", relaisM=" + relaisM + ", entreeD=" + entreeD + ", entreeM=" + entreeM
+				+ ", tempsM=" + tempsM + ", tempsD=" + tempsD + ", position=" + position + "]";
+	}
 
 	/**
 	 *  monte le volet tout en haut ou jusqu'a un stop
@@ -92,7 +93,7 @@ public class Volet {
 		monter(tempsM*2); // un *2 pour etre sure que le volet sera bien monter 
 	}
 	;
-
+	
 	/**
 	 * descend le volet tout en bas ou jusqu'a un stop
 	 */
@@ -110,42 +111,35 @@ public class Volet {
 		etat=0;
 	}
 
-
-	/**
-	 * permet de positionner le volet a un % expl setPosyion(50); met le volet a mis hauteur. 
-	 * @param position the position to set
-	 */
-	public void setPosition(int position) {
-		//TODO il faut bouger le volet en fonction de la position voulue
-		this.position = position;
-	}
-
+	
 	/**
 	 * descend le volet pendant (temp) ms
-	 * @param temp temps en ms
+	 * @param temp
 	 */
 	protected void monter(long temp) {
-		stop();
 		//TODO
+		//desactivation de tout timer stop sur ce volet
+		//desactivation du relais descente
 		//activation du relais monter
 		//creation d'un timer pour stop sur ce volet dans temp
 		etat=1;
 	}
-
+	
 	/**
 	 * descend le volet pendant (temp) ms
-	 * @param temp temps en ms
+	 * @param temp
 	 */
-	protected void descendre(long temp) {
-		stop();
+	public void descendre(long temp) {
 		//TODO
+		//desactivation de tout timer stop sur ce volet
+		//desactivation du relais monter
 		//activation du relais descente
 		//creation d'un timer pour stop sur ce volet dans temp
 		etat=2;
 	}
-
+	
 	/**
-	 * retourn le n° du relais  sur le arduino pour faire une descente
+	 * 
 	 * @return the relaisD
 	 */
 	public int getRelaisD() {
@@ -153,7 +147,6 @@ public class Volet {
 	}
 
 	/**
-	 * retourn le n° du relais  sur le arduino pour faire une monter
 	 * @return the relaisM
 	 */
 	public int getRelaisM() {
@@ -161,7 +154,6 @@ public class Volet {
 	}
 
 	/**
-	 * retourne le N° de l'entree sur le arduino pour lancer une descente
 	 * @return the entreeD
 	 */
 	public int getEntreeD() {
@@ -169,7 +161,6 @@ public class Volet {
 	}
 
 	/**
-	 * retourne le N° de l'entree sur le arduino pour lancer une monter
 	 * @return the entreeM
 	 */
 	public int getEntreeM() {
@@ -177,7 +168,6 @@ public class Volet {
 	}
 
 	/**
-	 * retourne le temps en ms pour une monter complete du volet
 	 * @return the tempsM
 	 */
 	public long getTempsM() {
@@ -185,7 +175,6 @@ public class Volet {
 	}
 
 	/**
-	 * retourne le temps en ms pour une descente complete du volet
 	 * @return the tempsD
 	 */
 	public long getTempsD() {
@@ -193,8 +182,6 @@ public class Volet {
 	}
 
 	/**
-	 * retourn la potion du volet en pourcentage 
-	 * expl si le volet est a mis hauteur on retourn 50
 	 * @return the position
 	 */
 	public int getPosition() {
@@ -202,28 +189,12 @@ public class Volet {
 	}
 
 	/**
-	 * retourn l'id de l'object
-	 * @return l'id 
+	 * @param position the position to set
 	 */
-	public int getID() {
-		return factory.getId(this);
+	public void setPosition(int position) {
+		//TODO il faut bouger le volet en fonction de la position voulue
+		this.position = position;
 	}
-
-
-	/**
-	 * @return the etat
-	 */
-	public int getEtat() {
-		return etat;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Volet [relaisD=" + relaisD + ", relaisM=" + relaisM + ", entreeD=" + entreeD + ", entreeM=" + entreeM
-				+ ", tempsM=" + tempsM + ", tempsD=" + tempsD + ", position=" + position + "]";
-	}
+	;
 }
+

@@ -7,9 +7,11 @@ import java.io.OutputStream;
 public class Ecriture {
 	
 	private OutputStream out;
+	private FactoryXG factory;
     
-	public Ecriture ( OutputStream out )
+	public Ecriture ( FactoryXG factory,OutputStream out )
 	{
+		this.factory=factory;
 		this.out = out;
 	}
 	
@@ -49,7 +51,7 @@ public class Ecriture {
 			}
 		} 
 		msgEnCours.ajout(Crc.calcul(msgEnCours.getData(), msgEnCours.getInd())); // on ajoute le crc
-		String msg=msgEnCours.toString(); // on transforme le tout en string
+		String msg=msgEnCours.toStringData(); // on transforme le tout en string
 		
 		//System.out.println(Msg.rechercheParMsgIn(msgEnCours)); // ici pour des test a modifier
 		//System.out.println(msg); // 

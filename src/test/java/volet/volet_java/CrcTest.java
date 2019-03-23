@@ -63,5 +63,25 @@ public class CrcTest {
 		int ind=3;
 		assertEquals(78,Crc.calcul(data, ind));
 	}
+	
+	/**
+	 * Test method for {@link volet.volet_java.Crc#calcul(int[], int)}.
+	 */
+	@Test
+	public void testCalcul_5() {
+		int data[]= {4,2,2};
+		int ind=3;
+		assertEquals(93,Crc.calcul(data, ind));
+	}
+
+	/**
+	 * Test method for {@link volet.volet_java.Crc#calcul(int[], int)}.
+	 */
+	@Test
+	public void testCalcul_6() {
+		int data[]= {4,2};
+		int ind=2;
+		assertEquals(152,Crc.calcul(data, ind));
+	}
 
 }

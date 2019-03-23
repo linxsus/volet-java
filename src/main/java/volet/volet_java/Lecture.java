@@ -2,6 +2,7 @@ package volet.volet_java;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.TooManyListenersException;
 
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
@@ -14,20 +15,34 @@ public class Lecture  implements SerialPortEventListener
     private int temp;
     private MsgBin msgEnCours;
     private boolean valideInt;
+    boolean limiteDepasse;
+   // private FactoryXG factory;
     
-	public Lecture ( InputStream in )
+	public Lecture ( FactoryXG factory,InputStream in )
 	{
+		//this.factory=factory;
 		this.in = in;
 		valideInt=false;
 //		buffer = new byte[1024];
 		msgEnCours=new MsgBin();
+		limiteDepasse=false;
+		try {
+			factory.getSerie().getSerialPort().addEventListener(this);
+		} catch (TooManyListenersException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		factory.getSerie().getSerialPort().notifyOnDataAvailable(true);
 	}
 
-	public void serialEvent(SerialPortEvent arg0) {
+	// le SerialPortEvent arg0 sert a etre compatible avec l'interface SerialPortEventListener 
+	public void serialEvent(SerialPortEvent arg0) { 
 		int icar=-1;
 		try {
 			icar = in.read();
 		} catch (IOException e1) {
+			//TODO gerer l'exception si il y a une erreur de lecture 
+			//exemple deconnexion de l'arduino
 			e1.printStackTrace();
 		} // on regarde lit le dernier caractere saisie
 		if (icar!=-1){ // si il y a bien un caractere
@@ -46,19 +61,21 @@ public class Lecture  implements SerialPortEventListener
 						valideInt=false;
 					}
 					else{ // sinon on a depasser la limite
-						System.out.println("limite des valeur sur une ligne depasser ");
+							limiteDepasse=true;
 					}
 				}
 				if(car=='\r'){ // si c'est un retour chario
-					if (msgEnCours.isValid()) // si le crc est correcte
+					if (msgEnCours.isValid() && !limiteDepasse) // si le crc est correcte
 					{
-						System.out.println(Msg.rechercheParMsgIn(msgEnCours));
-						msgEnCours=new MsgBin();// on recree une nouvelle lecture en cours
+						// TODO un println il faudrais le modifier 
+						// en plus il serait utile de le metre dans un buffer.
+						System.out.println(msgEnCours);
+						
 					}else{ // sinon le crc n'est pas correcte
 						System.out.println("message nok");
-						System.out.println(msgEnCours);
-						msgEnCours=new MsgBin();
+						//System.out.println(msgEnCours);
 					}
+					msgEnCours=new MsgBin();// on recree une nouvelle lecture en cours
 
 				}
 			}

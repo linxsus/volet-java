@@ -10,7 +10,10 @@ public class MsgBin {
     }
     
 	public boolean isValid() {
+		if (ind>0) {
 	    return Crc.calcul(data, ind-1)==data[ind-1];// le ind-1 de Crc.calcul est pour ne pas prendre en compte le crc dans le message
+		}
+		return false;
 	}
 	
 	public int getInd() { 
@@ -29,6 +32,16 @@ public class MsgBin {
 	}
 	
 	public String toString() {
+		String str;
+		str=MsgEnum.rechercheParMsgIn(data[0]).toString();
+		for (int i=1;i<ind-1;i++) {
+			str+=data[i]+" ";
+		}
+		//str+="\r\n";
+		return str;
+	}
+	
+	public String toStringData() {
 		String str="";
 		for (int i=0;i<ind;i++) {
 			str+=data[i]+" ";
@@ -36,5 +49,4 @@ public class MsgBin {
 		str+="\r\n";
 		return str;
 	}
-	
 }
