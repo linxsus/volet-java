@@ -1,7 +1,7 @@
-package volet.volet_java;
+package volet.volet_java.var;
 
 
-public enum Msg {
+public enum MsgEnum {
 	//Objets directement construits
 	MSG_TEST(3000, "test"),
 	MSG_CREATION_COMUNICATION(3001, "debug creation Comunication"),
@@ -45,27 +45,18 @@ public enum Msg {
 
 	private int intMsg = 0;
 	private String stringMsg = "";
-	private MsgBin msgBin;
 
-	public MsgBin getMsgIn() {
-		return msgBin;
-	}
-
-	public void setMsgIn(MsgBin msgBin) {
-		this.msgBin = msgBin;
-	}
 
 	//Constructeur
-	Msg(int intMsg, String stringMsg){
+	MsgEnum(int intMsg, String stringMsg){
 		this.intMsg = intMsg;
 		this.stringMsg = stringMsg;
 	}
 
-	public static Msg rechercheParMsgIn(MsgBin msgBin){
+	public static MsgEnum rechercheParMsgIn(int i){
 		
-		for(Msg v : values()){
-			if( v.intMsg==msgBin.getData()[0]){
-				v.setMsgIn(msgBin);
+		for(MsgEnum v : values()){
+			if( v.intMsg==i){
 				return v;
 			}
 		}
@@ -73,11 +64,11 @@ public enum Msg {
 	}
 
 	public String toString(){
-		String result=stringMsg;
-		for (int i=1; i<(msgBin.getInd()-1);i++){
-			result+=" "+msgBin.getData()[i];
-		}
-		return result;
+		return stringMsg;
+	}
+	
+	public int toInt(){
+		return intMsg;
 	}
 }
 

@@ -1,36 +1,28 @@
 package volet.volet_java;
 
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.Scanner;
 
 public class Main {
-	
-	
-	 public Main()
-	    {
-	        super();
-	    }
-	 
-	    public static void main ( String[] args )
-	    {
-	    	InputStream in;
-	    	OutputStream out;
-	    	Serie serie=null;
-	    try {
-			serie=new Serie();
-		} catch (Exception e) {
-			e.printStackTrace();
+
+	private static Scanner sc;
+	private static FactoryXG factory;
+	public Main()
+	{
+		super();
+	}
+
+	public static void main ( String[] args )
+	{
+		factory=new FactoryXG();
+		sc = new Scanner(System.in);
+		factory.getLecture();
+		Ecriture out=factory.getEcriture();
+		while (true) {
+			String str = sc.nextLine();
+			out.serialEvent(str);
 		}
-	       in=serie.getIn();
-	       out=serie.getOut();
-	      // SerialReader read=
-	       new Lecture(in);
-	       Ecriture input=new Ecriture(out);
-	       while (true) {
-	    	   input.serialEvent(null);
-	        }
-	    }
+	}
 
 
 }
