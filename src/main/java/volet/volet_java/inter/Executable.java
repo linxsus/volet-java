@@ -1,4 +1,4 @@
-package volet.volet_java;
+package volet.volet_java.inter;
 
 @FunctionalInterface
 public interface Executable {

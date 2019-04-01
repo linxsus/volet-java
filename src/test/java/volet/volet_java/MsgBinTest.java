@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+import volet.volet_java.var.Global;
+
 class MsgBinTest {
 
 	@Test

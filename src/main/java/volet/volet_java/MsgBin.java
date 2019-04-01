@@ -1,5 +1,8 @@
 package volet.volet_java;
 
+import volet.volet_java.var.Global;
+import volet.volet_java.var.MsgEnum;
+
 public class MsgBin {
     private int ind;
     private int data[];
@@ -31,6 +34,17 @@ public class MsgBin {
 		ind++;
 	}
 	
+	// TODO test non fait
+	public void ajout(MsgEnum msg) {
+		ajout(msg.toInt());
+	}
+	
+	
+	// TODO test non fait
+	public void ajoutCrc() {
+		ajout(Crc.calcul(data,ind));
+	}
+	
 	public String toString() {
 		String str;
 		str=MsgEnum.rechercheParMsgIn(data[0]).toString();
@@ -42,6 +56,7 @@ public class MsgBin {
 	}
 	
 	public String toStringData() {
+		
 		String str="";
 		for (int i=0;i<ind;i++) {
 			str+=data[i]+" ";

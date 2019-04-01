@@ -7,10 +7,13 @@ import java.io.PrintStream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import volet.volet_java.moc.FactoryXGMoc;
 import volet.volet_java.moc.SerieMoc;
+import volet.volet_java.var.Global;
+import volet.volet_java.var.MsgEnum;
 
 class EcritureTest {
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -27,6 +30,7 @@ class EcritureTest {
 	    
 	}
 
+	
 	@AfterEach
 	public void restoreStreams() {
 	    System.setOut(originalOut);
@@ -37,7 +41,7 @@ class EcritureTest {
 		return ((SerieMoc)factory.getSerie()).envoie();
 	}
 	
-	
+	@DisplayName("pour reset")
 	@Test
 	void testSerialEvent_1() {		
 		Ecriture ecri=factory.getEcriture();
@@ -46,6 +50,7 @@ class EcritureTest {
 		
 	}
 
+	@DisplayName("pour 255 1")
 	@Test
 	void testSerialEvent_2() {	
 		Ecriture ecri=factory.getEcriture();
@@ -54,6 +59,7 @@ class EcritureTest {
 		
 	}
 	
+	@DisplayName("pour 255t t1 verif que l'on ne prend que les chifre ")
 	@Test
 	void testSerialEvent_3() {
 		
@@ -63,6 +69,7 @@ class EcritureTest {
 		
 	}
 	
+	@DisplayName("pour xavier 255t t1rr verif que l'on ne prend que les chifre ")
 	@Test
 	void testSerialEvent_4() {
 		
@@ -72,6 +79,7 @@ class EcritureTest {
 		
 	}
 	
+	@DisplayName("verif que l'on ne prend bien Global.NB_MAX_VALEUR caractere")
 	@Test
 	void testSerialEvent_5() {
 		
@@ -86,6 +94,7 @@ class EcritureTest {
 		
 	}
 	
+	@DisplayName("verif que l'on a bien une erreur si on depasse le nb de caractere +1")
 	@Test
 	void testSerialEvent_6() {
 		
@@ -100,6 +109,7 @@ class EcritureTest {
 		
 	}
 	
+	@DisplayName("verif que l'on a bien une erreur si on depasse le nb de caractere +5")
 	@Test
 	void testSerialEvent_7() {
 		
@@ -114,12 +124,27 @@ class EcritureTest {
 		
 	}
 	
+	@DisplayName("verif que l'on peut accepter un carctere special")
 	@Test
+	// test tres leger mais je suis pas un specialiste 
 	void testSerialEvent_8() {
 		
 		Ecriture ecri=factory.getEcriture();
-		ecri.serialEvent("/r 0");
-		assertEquals("0 0 \r\n", envoie());
+		ecri.serialEvent("\r\n\\r\\n 1 \r\n\\r\\n 2");
+		assertEquals("1 2 255 \r\n", envoie());
+		
+	}
+	
+	@DisplayName("verif pour un msgBin")
+	@Test
+	void testSerialEvent_9() {
+		MsgBin msg=new MsgBin();
+		msg.ajout(MsgEnum.ACTIVATION_SORTIE);
+		msg.ajout(5);
+		msg.ajoutCrc();
+		Ecriture ecri=factory.getEcriture();
+		ecri.serialEvent(msg);
+		assertEquals("4 5 30 \r\n", envoie());
 		
 	}
 }

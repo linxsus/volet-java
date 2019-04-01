@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
+import volet.volet_java.var.Global;
 
 
 /**

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import volet.volet_java.moc.FactoryXGMoc;
 import volet.volet_java.moc.SerieMoc;
+import volet.volet_java.var.Global;
 
 /**
  * 

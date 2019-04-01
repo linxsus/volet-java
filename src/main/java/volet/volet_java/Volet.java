@@ -49,6 +49,17 @@ public class Volet {
 
 
 
+
+	//	 /**
+	//	 * @param a
+	//	 * @param b
+	//	 * @return
+	//	 */
+	//	private int pourcentage(int a,int b){
+	//	        //TODO
+	//		return 0;
+	//	    }
+
 	/**
 	 * constructeur
 	 * 

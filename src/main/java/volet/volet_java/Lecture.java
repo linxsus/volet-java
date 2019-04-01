@@ -6,6 +6,7 @@ import java.util.TooManyListenersException;
 
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import volet.volet_java.var.Global;
 
 public class Lecture  implements SerialPortEventListener 
 {
