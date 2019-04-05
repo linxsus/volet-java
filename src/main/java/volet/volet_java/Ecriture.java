@@ -67,7 +67,7 @@ public class Ecriture {
 				valideInt=true; // on valide le faite qu'il y ai bien un nombre
 			}else { //sinon si c'est un espace
 				if (valideInt==true){ // si il y a eu un nombre
-					if (msgEnCours.getInd()<Global.NB_MAX_VALEUR-1){ // si on a pas ateint la limite des valeur sur une ligne
+					if (msgEnCours.length()<Global.NB_MAX_VALEUR-1){ // si on a pas ateint la limite des valeur sur une ligne
 						msgEnCours.ajout(temp); // on ajoute la valeur saisie au tableau
 						// on reinitialise les variables
 						temp=0;

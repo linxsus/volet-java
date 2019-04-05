@@ -1,5 +1,5 @@
 
-package volet.volet_java;
+package volet.volet_java.var;
 
 public class Global {
 	public static int NB_MAX_VALEUR=12;

@@ -55,7 +55,7 @@ public class Lecture  implements SerialPortEventListener
 				valideInt=true; // on valide le faite qu'il y ai bien un nombre
 			}else if (car==' ' || car=='\r'){ //sinon si c'est un espace ou un retour chariot
 				if (valideInt==true){ // si il y a eu un nombre
-					if (msgEnCours.getInd()<Global.NB_MAX_VALEUR){ // si on a pas ateint la limite des valeur sur une ligne
+					if (msgEnCours.length()<Global.NB_MAX_VALEUR){ // si on a pas ateint la limite des valeur sur une ligne
 						msgEnCours.ajout(temp); // on ajoute la valeur saisie au tableau
 						// on reinitialise les variables
 						temp=0;

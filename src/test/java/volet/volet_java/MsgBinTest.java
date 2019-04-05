@@ -43,7 +43,7 @@ class MsgBinTest {
 		msgBin.ajout(2);
 		msgBin.ajout(2);
 		msgBin.ajout(93);
-		assertEquals(4,msgBin.getInd());
+		assertEquals(4,msgBin.length());
 	}
 
 	@Test
