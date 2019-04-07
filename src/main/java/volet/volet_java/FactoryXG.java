@@ -80,37 +80,22 @@ public class FactoryXG {
 		return getSerie(Global.portSpeed,Global.portName);
 	}
 
-	//TODO comentaitre
-	public Lecture getLecture() {
-		// c'est un object unique
-		// si il existe on le recupere 
-		Lecture lecture=ifExiste(Lecture.class);
-		// sinon on le cree
-		if (lecture==null) {
-			// on recupere le inputstream du port serie
-			InputStream in=getSerie().getIn();
-			// on cree l'object avec le on l'joute a la base
-			lecture=new Lecture(this,in);
-			objects.add(lecture);
-		}
-		return lecture;
-	}
-
-	//TODO comentaitre
-		public Ecriture getEcriture() {
-			// c'est un object unique
-			// si il existe on le recupere 
-			Ecriture ecriture=ifExiste(Ecriture.class);
-			// sinon on le cree
-			if (ecriture==null) {
-				// on recupere le inputstream du port serie
-				OutputStream out=getSerie().getOut();
-				// on cree l'object avec le on l'joute a la base
-				ecriture=new Ecriture(this,out);
-				objects.add(ecriture);
-			}
-			return ecriture;
-		}
+//
+//	//TODO comentaitre
+//		public Ecriture getEcriture() {
+//			// c'est un object unique
+//			// si il existe on le recupere 
+//			Ecriture ecriture=ifExiste(Ecriture.class);
+//			// sinon on le cree
+//			if (ecriture==null) {
+//				// on recupere le inputstream du port serie
+//				OutputStream out=getSerie().getOut();
+//				// on cree l'object avec le on l'joute a la base
+//				ecriture=new Ecriture(this,out);
+//				objects.add(ecriture);
+//			}
+//			return ecriture;
+//		}
 	
 	//TODO comentaire
 	public Gestion getGestion() {
@@ -200,7 +185,7 @@ public class FactoryXG {
 		// sinon on le cree
 		if (serie==null) {
 			try {
-				serie = new Serie(this,portSpeed,portName);
+				serie = new Serie(portSpeed,portName);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

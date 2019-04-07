@@ -2,11 +2,12 @@ package volet.volet_java;
 
 
 import java.util.Scanner;
+import java.util.concurrent.LinkedTransferQueue;
 
 public class Main {
 
 	private static Scanner sc;
-	private static FactoryXG factory;
+	private static FactorySerie factory;
 	public Main()
 	{
 		super();
@@ -14,15 +15,17 @@ public class Main {
 
 	public static void main ( String[] args )
 	{
-		factory=new FactoryXG();
+		factory=new FactorySerie(9600,"COM4");
 		sc = new Scanner(System.in);
-		factory.getLecture();
-		Ecriture out=factory.getEcriture();
+		// TODO a recree corectement
+		LinkedTransferQueue<MsgBin> out=factory.getOut();
 		while (true) {
 			String str = sc.nextLine();
-			out.serialEvent(str);
+			MsgBin msg=new MsgBin();
+			msg.ajout(str);
+			out.offer(msg);
 		}
 	}
-
+	
 
 }

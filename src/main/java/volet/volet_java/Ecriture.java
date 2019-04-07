@@ -2,6 +2,7 @@ package volet.volet_java;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.LinkedTransferQueue;
 
 import volet.volet_java.var.Global;
 
@@ -15,28 +16,28 @@ import volet.volet_java.var.Global;
  * @author phenom
  *
  */
-public class Ecriture {
+public class Ecriture extends Thread{
 	
 	/**
 	 * le out du port serie ou on envie les messages
 	 */
-	private OutputStream out;
+	private OutputStream outSerie;
+	LinkedTransferQueue<MsgBin> outQueue;
 	
-	/**
-	 *  le factory 
-	 */
-	private FactoryXG factory;
-    
+
 	/**
 	 * le constructeur
+	 * @param outQueue 
 	 * 
 	 * @param factory le factory qui vien de cree l'object
-	 * @param out le OutputStream du port serie 
+	 * @param outSerie le OutputStream du port serie 
 	 */
-	public Ecriture ( FactoryXG factory,OutputStream out )
+	public Ecriture ( Serie serie, LinkedTransferQueue<MsgBin> outQueue )
 	{
-		this.factory=factory;
-		this.out = out;
+		// permet de nomer le thread
+		super("ecriture");
+		this.outQueue=outQueue;
+		this.outSerie = serie.getOut();
 	}
 	
 	/**
@@ -48,45 +49,8 @@ public class Ecriture {
 	// cette fonction ne devrait pas forcement etre ici
 	// plus dans msgBin ou dans un class a part.
 	public void serialEvent(String str) {
-		boolean limiteDepasse=false;
-		int icar=-1;
-		MsgBin msgEnCours=new MsgBin();
-		int temp=0;
-		boolean valideInt=false;
-		
-		// on formate le message pour le transformer en 
-		str+=" "; // utile pour bien prendre en compte la derniere valeur
-		for(int i=0;i<str.length();i++){ // si il y a bien un caractere
-			icar = str.charAt(i);
-			//System.out.print((char) icar);
-			//System.out.print('t');
-			char car=(char) icar;
-			if (car>='0' && car<='9') // si c'est un nombre
-			{
-				temp=(10*temp)+(car-'0'); // calcul le nombre envoyer
-				valideInt=true; // on valide le faite qu'il y ai bien un nombre
-			}else { //sinon si c'est un espace
-				if (valideInt==true){ // si il y a eu un nombre
-					if (msgEnCours.length()<Global.NB_MAX_VALEUR-1){ // si on a pas ateint la limite des valeur sur une ligne
-						msgEnCours.ajout(temp); // on ajoute la valeur saisie au tableau
-						// on reinitialise les variables
-						temp=0;
-						valideInt=false;
-					}
-					else{ // sinon on a depasser la limite
-						if (!limiteDepasse) {
-							// TODO ici une sortie sur le perifierique standard ce n'est pas tres jolie. 
-							// pensser a modifier les test testSerialEvent_5() a testSerialEvent_7() si on change.
-							System.out.println("limite des valeur sur une ligne depasser ");
-							limiteDepasse=true;
-						}
-					}
-				}
-			}
-		} 
-		
-		// on ajoute le crc
-		msgEnCours.ajoutCrc();
+		MsgBin msgEnCours=new MsgBin(); 
+		msgEnCours.ajout(str);
 		// on envoie le message
 		serialEvent(msgEnCours);
 	}
@@ -104,11 +68,35 @@ public class Ecriture {
 		// on envoie le message vers le arduino
 		for(int i=0;i<msg.length();i++){
             try {
-				this.out.write(msg.charAt(i));
+				this.outSerie.write(msg.charAt(i));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				// gerer l'interuption break.
 				e.printStackTrace();
 			}
         }    
 	}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					serialEvent(outQueue.take());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					break; // sort de la boucle while
+				}
+			}		
+		}
+		
+		  @Override
+		    public void interrupt() {
+		        super.interrupt();
+		        try {
+		            outSerie.close(); // Fermeture du flux si l'interruption n'a pas fonctionné.
+		        } catch (IOException e) {}
+		    }
 }

@@ -4,15 +4,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.io.ByteArrayOutputStream;
-
+import java.io.IOException;
 import java.io.PrintStream;
+import java.util.TooManyListenersException;
+import java.util.concurrent.LinkedTransferQueue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import volet.volet_java.moc.FactoryXGMoc;
-import volet.volet_java.moc.SerieMoc;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.UnsupportedCommOperationException;
+import volet.volet_java.mock.FactoryXGMock;
+import volet.volet_java.mock.SerieMock;
 import volet.volet_java.var.Global;
 
 /**
@@ -31,13 +36,14 @@ class LectureTest {
 	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
 	private final PrintStream originalErr = System.err;
+	private LinkedTransferQueue<MsgBin> out;
+	private SerieMock serie;
 	
 	@BeforeEach
 	public void setUpStreams() {
 	    System.setOut(new PrintStream(outContent));
 	    System.setErr(new PrintStream(errContent));
-
-	    
+	    out=new LinkedTransferQueue<MsgBin>();	    
 	}
 
 	@AfterEach
@@ -48,21 +54,29 @@ class LectureTest {
 
 	// ici on recupere la sortie println et on la transforme en string
 	String sortie() {
-		return outContent.toString();
+		return out.peek().toString();
 	}
 	
 	// on simule le fonctionement du thread
 	void run(String temp) {
-		FactoryXGMoc factory=new FactoryXGMoc();
-        SerieMoc serie=(SerieMoc)factory.getSerie(temp); // on cree un port serie virtuel pour les test.
-        serie.runLecture(); // c'est ici qu'est cree Lecture et on le lancer (a la base c'est un thread qui boucle)
+		
+        serie=null;
+		try {
+			serie = new SerieMock(temp);
+		} catch (NoSuchPortException | UnsupportedCommOperationException | IOException | TooManyListenersException
+				| PortInUseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // on cree un port serie virtuel pour les test.
+        Lecture lecture=new Lecture(serie,out);
+        serie.runLecture(lecture); // c'est ici qu'est cree Lecture et on le lancer (a la base c'est un thread qui boucle)
 	}
 	
 	@Test
 	void testSerialEvent_1() {
 		String temp="0 0 \r\n";
 		run(temp);
-		assertEquals("reset\r\n", sortie() );
+		assertEquals("reset", sortie() );
 	}
 
 	@Test

@@ -21,7 +21,6 @@ public class Serie {
 	protected OutputStream out;
 	protected SerialPort serialPort;
 
-	//private FactoryXG factory;
 	
 	/**
 	 * @return the serialPort
@@ -31,9 +30,8 @@ public class Serie {
 	}
 
 
-	public Serie (FactoryXG factory,int portSpeed,String portName) throws NoSuchPortException, UnsupportedCommOperationException, IOException, TooManyListenersException, PortInUseException
+	public Serie (int portSpeed,String portName) throws NoSuchPortException, UnsupportedCommOperationException, IOException, TooManyListenersException, PortInUseException
 	{
-		//this.factory=factory;
 		in=null;
 		out=null;
 		serialPort=null;

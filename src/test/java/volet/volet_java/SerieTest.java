@@ -35,7 +35,7 @@ class SerieTest {
 		
 	    FactoryXG factory=new FactoryXG();
 		try {
-			serie=new Serie(factory,Global.portSpeed,Global.portName);
+			serie=new Serie(Global.portSpeed,Global.portName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(" verrifier que l'arduino est bien brancher sur le port "+Global.portName+" avant toute chose");
@@ -71,14 +71,14 @@ class SerieTest {
 	@Test
 	void testExceptionNoSuchPort()  {
 		 Assertions.assertThrows(NoSuchPortException.class, () -> {
-			 new Serie(null,Global.portSpeed,"com10");;
+			 new Serie(Global.portSpeed,"com10");;
 		    });
 	}
 	
 	@Test
 	void testExceptionPortInUseException()  {
 		 Assertions.assertThrows(PortInUseException.class, () -> {
-			 new Serie(null,Global.portSpeed,Global.portName);;
+			 new Serie(Global.portSpeed,Global.portName);;
 		    });
 	}
 

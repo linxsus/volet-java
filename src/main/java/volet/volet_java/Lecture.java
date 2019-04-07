@@ -3,37 +3,23 @@ package volet.volet_java;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TooManyListenersException;
+import java.util.concurrent.LinkedTransferQueue;
 
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import volet.volet_java.var.Global;
 
 public class Lecture  implements SerialPortEventListener 
 {
-	
+
 	private InputStream in;
-//	private byte[] buffer;
-    private int temp;
-    private MsgBin msgEnCours;
-    private boolean valideInt;
-    boolean limiteDepasse;
-   // private FactoryXG factory;
-    
-	public Lecture ( FactoryXG factory,InputStream in )
+	private String msgEnCours;
+	private LinkedTransferQueue<MsgBin> out;
+
+	public Lecture ( Serie serie, LinkedTransferQueue<MsgBin> out)
 	{
-		//this.factory=factory;
-		this.in = in;
-		valideInt=false;
-//		buffer = new byte[1024];
-		msgEnCours=new MsgBin();
-		limiteDepasse=false;
-		try {
-			factory.getSerie().getSerialPort().addEventListener(this);
-		} catch (TooManyListenersException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		factory.getSerie().getSerialPort().notifyOnDataAvailable(true);
+		this.in = serie.getIn();
+		this.out=out;
+		msgEnCours="";
 	}
 
 	// le SerialPortEvent arg0 sert a etre compatible avec l'interface SerialPortEventListener 
@@ -49,38 +35,25 @@ public class Lecture  implements SerialPortEventListener
 		if (icar!=-1){ // si il y a bien un caractere
 			//System.out.print((char) icar);
 			char car=(char) icar;
-			if (car>='0' && car<='9') // si c'est un nombre
-			{
-				temp=(10*temp)+(car-'0'); // calcul le nombre envoyer
-				valideInt=true; // on valide le faite qu'il y ai bien un nombre
-			}else if (car==' ' || car=='\r'){ //sinon si c'est un espace ou un retour chariot
-				if (valideInt==true){ // si il y a eu un nombre
-					if (msgEnCours.length()<Global.NB_MAX_VALEUR){ // si on a pas ateint la limite des valeur sur une ligne
-						msgEnCours.ajout(temp); // on ajoute la valeur saisie au tableau
-						// on reinitialise les variables
-						temp=0;
-						valideInt=false;
-					}
-					else{ // sinon on a depasser la limite
-							limiteDepasse=true;
-					}
+			msgEnCours+=car;
+			if(car=='\r'){ // si c'est un retour chario
+				boolean ok=true;
+				MsgBin msgBin=new MsgBin();
+				ok&=msgBin.ajout(msgEnCours,false); 
+				ok&=msgBin.isValid();
+				if (ok) {
+					out.offer(msgBin);
+					//TODO ici pour faire des test dans un premier temps
+					System.out.println(msgBin);
+					
 				}
-				if(car=='\r'){ // si c'est un retour chario
-					if (msgEnCours.isValid() && !limiteDepasse) // si le crc est correcte
-					{
-						// TODO un println il faudrais le modifier 
-						// en plus il serait utile de le metre dans un buffer.
-						System.out.println(msgEnCours);
-						
-					}else{ // sinon le crc n'est pas correcte
-						System.out.println("message nok");
-						//System.out.println(msgEnCours);
-					}
-					msgEnCours=new MsgBin();// on recree une nouvelle lecture en cours
-
+				else{ // sinon le crc n'est pas correcte
+					System.out.println("message nok");
+					//System.out.println(msgEnCours);
 				}
+				msgEnCours="";// on recree une nouvelle lecture en cours
 			}
-		}            
-	}
+		}
+	}            
 }
 

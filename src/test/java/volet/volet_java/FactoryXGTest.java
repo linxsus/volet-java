@@ -80,25 +80,26 @@ class FactoryXGTest {
 		assertEquals(serie, serie1);
 	}
 
-	@Disabled //a lancer qu'individuellement
-	@Test
-	void testNewLecture() {
-		// attention il faut que le arduino soit brancher
-		Lecture lecture=factory.getLecture();
-		assertThat(lecture, instanceOf(Lecture.class));
-		Lecture lecture1=factory.getLecture();
-		assertEquals(lecture, lecture1);
-	}
-
-	@Disabled //a lancer qu'individuellement
-	@Test
-	void  testGetEcriture() {
-		// attention il faut que le arduino soit brancher
-		Ecriture ecriture=factory.getEcriture();
-		assertThat(ecriture, instanceOf(Ecriture.class));
-		Ecriture ecriture1=factory.getEcriture();
-		assertEquals(ecriture, ecriture1);
-	}
+	//TODO a suprimer
+//	@Disabled //a lancer qu'individuellement
+//	@Test
+//	void testNewLecture() {
+//		// attention il faut que le arduino soit brancher
+//		Lecture lecture=factory.getLecture();
+//		assertThat(lecture, instanceOf(Lecture.class));
+//		Lecture lecture1=factory.getLecture();
+//		assertEquals(lecture, lecture1);
+//	}
+//
+//	@Disabled //a lancer qu'individuellement
+//	@Test
+//	void  testGetEcriture() {
+//		// attention il faut que le arduino soit brancher
+//		Ecriture ecriture=factory.getEcriture();
+//		assertThat(ecriture, instanceOf(Ecriture.class));
+//		Ecriture ecriture1=factory.getEcriture();
+//		assertEquals(ecriture, ecriture1);
+//	}
 	
 	@Test
 	void testGetObjectDeType() {

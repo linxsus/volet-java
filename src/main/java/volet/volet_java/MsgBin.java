@@ -62,6 +62,7 @@ public class MsgBin {
 	 * @return le tableau de data
 	 */
 	public int[] getData() {
+		data[length]=crc;
 		return data;
 	}
 	
@@ -69,11 +70,21 @@ public class MsgBin {
 	 * ajout un int au data
 	 * @param data un int a jouter au data
 	 */
-	public boolean ajout(int data) {
-		// le -1 sert pour le crc
-		if (length<this.data.length-1) {
+	synchronized public boolean ajout(int data) {
+		return ajout(data,true);
+	}
+
+	/**
+	 * ajout un int au data
+	 * @param data un int a jouter au data
+	 */
+	synchronized public boolean ajout(int data,boolean  enableCrc) {
+		int limite= enableCrc?Global.NB_MAX_VALEUR-1:Global.NB_MAX_VALEUR;
+		if (length<limite) {
 		this.data[length] = data;
 		length++;
+		if (enableCrc) {
+			setCrc();}
 		return true;
 		}
 		return false;
@@ -85,19 +96,89 @@ public class MsgBin {
 	 * doit etre le 1er data ajouter
 	 * @param msg msgEnum a ajouter
 	 */
-	public boolean ajout(MsgEnum msg) {
+	synchronized public boolean ajout(MsgEnum msg) {
 		if (length==0) { // on verifie qu'on est bien sur le 1er data
 		  return ajout(msg.toInt());
 		}
 		return false;
 	}
 	
+	/**
+	 * fonction pour formater un string et l'ajouter au data
+	 * 
+	 * le string doit etre du style "XX XX XX" si enableCrc est a true
+	 * ou du style "xx xx xx crc" si enableCrc est false 
+	 *  
+	 * @param str message a formater
+	 * @param enableCrc a true le crc est caluler automatiquement a false le dernier ajout est le crc
+	 */
+	synchronized public boolean ajout(String str) {
+		return ajout(str,true);
+	}
+
+	
+	/**
+	 * fonction pour formater un string et l'ajouter au data
+	 * 
+	 * le string doit etre du style "XX XX XX" si enableCrc est a true
+	 * ou du style "xx xx xx crc" si enableCrc est false 
+	 *  
+	 * @param str message a formater
+	 * @param enableCrc a true le crc est caluler automatiquement a false le dernier ajout est le crc
+	 */
+	synchronized public boolean ajout(String str,boolean enableCrc) {
+		boolean ok=true;
+		//int icar=-1; // caractere en cours
+		int temp=0; // nb en cours
+		boolean valideInt=false;
+		int limite= enableCrc?Global.NB_MAX_VALEUR-1:Global.NB_MAX_VALEUR;
+		// on formate le message
+		str+=" "; // utile pour bien prendre en compte la derniere valeur
+		// pour chaque caractere 
+		for(int i=0;i<str.length();i++){ 			
+			char car=str.charAt(i);
+			if (car>='0' && car<='9') // si c'est un nombre
+			{
+				temp=(10*temp)+(car-'0'); // calcul le nombre envoyer
+				valideInt=true; // on valide le faite qu'il y ai bien un nombre
+			}else { //sinon
+				if (valideInt==true){ // si il y a eu un nombre
+					if (length<limite){ // si on a pas ateint la limite des valeur sur une ligne
+						ok&=ajout(temp,enableCrc); // on ajoute la valeur saisie au tableau et si on n'a pas reussit passe ok a false
+						// on reinitialise les variables
+						temp=0;
+						valideInt=false;
+					}
+					else{ // sinon on a depasser la limite
+						ok=false;
+					}
+				}
+			}
+		} 
+		if (enableCrc) {
+			setCrc();
+		}else{
+			if (length>0) {
+			length--;
+			crc=data[length];
+			}
+		}
+		return ok;
+	}
+
+	/**
+	 * calcul et joute le crc au message
+	 */
+	synchronized  public void setCrc() {
+		crc=Crc.calcul(data,length);
+	} 
 	
 	/**
 	 * ajoute le crc au message
+	 * @param crc
 	 */
-	public void ajoutCrc() {
-		crc=Crc.calcul(data,length);
+	synchronized public void setCrc(int crc) {
+		this.crc=crc;
 	}
 	
 	/* (non-Javadoc)
@@ -114,7 +195,7 @@ public class MsgBin {
 	}
 	
 	/**
-	 * retorune le message au format arduino
+	 * retourne le message au format arduino
 	 * @return string au format arduino
 	 */
 	public String toStringData() {
@@ -127,47 +208,5 @@ public class MsgBin {
 		// on rajoute le crc et le retour chariot
 		str+=crc+" \r\n";
 		return str;
-	}
-	
-	/**
-	 * fonction pour formater un string
-	 * 
-	 * 
-	 * @param str message a formater
-	 */
-	public void ajout(String str,boolean enableCrc) {
-		boolean limiteDepasse=false;
-		//int icar=-1; // caractere en cours
-		int temp=0; // nb en cours
-		boolean valideInt=false;
-		
-		// on formate le message
-		str+=" "; // utile pour bien prendre en compte la derniere valeur
-		// pour chaque caractere 
-		for(int i=0;i<str.length();i++){ 			
-			char car=str.charAt(i);
-			if (car>='0' && car<='9') // si c'est un nombre
-			{
-				temp=(10*temp)+(car-'0'); // calcul le nombre envoyer
-				valideInt=true; // on valide le faite qu'il y ai bien un nombre
-			}else { //sinon
-				if (valideInt==true){ // si il y a eu un nombre
-					if (length<Global.NB_MAX_VALEUR-1){ // si on a pas ateint la limite des valeur sur une ligne
-						ajout(temp); // on ajoute la valeur saisie au tableau
-						// on reinitialise les variables
-						temp=0;
-						valideInt=false;
-					}
-					else{ // sinon on a depasser la limite
-						if (!limiteDepasse) { // on affiche le message qu'une seul fois
-							// TODO ici une sortie sur le perifierique standard ce n'est pas tres jolie. 
-							// pensser a modifier les test testSerialEvent_5() a testSerialEvent_7() si on change.
-							System.out.println("limite des valeur sur une ligne depasser ");
-							limiteDepasse=true;
-						}
-					}
-				}
-			}
-		} 
 	}
 }
