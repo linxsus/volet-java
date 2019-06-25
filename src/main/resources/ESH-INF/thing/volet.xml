@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="XGdomotique"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+    xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+   <thing-type id="Volet">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="Arduino" />
+        </supported-bridge-type-refs>
+        <label>object volet</label>
+        <description>creation de volet</description>
+        <channels>
+            <channel id="UP" typeId="switchUP" />
+            <channel id="DOWN" typeId="switchDown" />
+            <channel id="STOP" typeId="switchStop" />
+        </channels>
+        
+        <config-description>
+            <parameter name="tMontee" type="integer" required="true" >
+                <label>temps pour la monter</label>
+                <default>10</default>
+                <unitLabel>ms</unitLabel>
+            </parameter>
+        </config-description>
+    </thing-type>
+     
+    
+    <channel-type id="switchUP">
+        <item-type>Switch</item-type>
+        <label>bouton monter</label>
+        <description>permet de faire monter le volet</description>
+    </channel-type>
+    <channel-type id="switchDown">
+        <item-type>Switch</item-type>
+        <label>bouton Descendre</label>
+        <description>permet de faire descendre le volet</description>
+    </channel-type>
+    <channel-type id="switchStop">
+        <item-type>Switch</item-type>
+        <label>bouton arret</label>
+        <description>permet d'arreter le volet</description>
+    </channel-type>
+
+
+</thing:thing-descriptions>
+
+
